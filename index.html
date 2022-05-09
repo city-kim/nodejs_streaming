@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>example</title>
+  <script type="importmap">
+    {
+      "imports": {
+        "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+      }
+    }
+  </script>
+  <style>
+    .progress{padding:10px 0; }
+    .stream{margin-top:10px; }
+    .stream video{margin-top:10px; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div v-show="!filename">
+      <input ref="file" type="file" />
+      <button type="button" @click="createChunkFile()">파일 업로드하기</button>
+      <div class="progress"
+        v-show="fileArray.length > 0"
+      >
+        <progress :max="fileArray.length - 1" :value="progressBar"></progress>
+      </div>
+    </div>
+
+    <div class="stream"
+      v-show="filename"
+    >
+      <p>{{filename}}</p>
+      <button type="button"
+        @click="stream = true"
+      >업로드한 video 스트리밍</button>
+      <div v-if="stream">
+        <video width="320" height="240" controls>
+          <source :src="`/api/video?name=${filename}`" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createApp } from 'vue'
+  
+    createApp({
+      data() {
+        return {
+          filename: '',
+          fileArray: [],
+          progressBar: 0,
+          stream: false,
+        }
+      },
+      methods: {
+        async createChunkFile() {
+          const chunkSize = 1 * (1024*1024) // 1MB
+          const file = this.$refs.file.files[0]; // 잘라줄 파일
+          const blobLength = Math.ceil(file.size / chunkSize) // 올림으로 index를 만든다
+          let sliceStart = 0; // slice 시작
+          for (let i=0; i<blobLength; i++) {
+            // 파일 분할하기
+            let sliceEnd = Math.min(chunkSize * (i + 1) , file.size )
+            // 마지막 index를 file.size까지이기 때문에 chunkSize * index 사이즈와 비교해 작은값을 쓴다
+            this.fileArray.push(file.slice(sliceStart, sliceEnd, file.type))
+            // file Array에 담아주기
+            sliceStart = sliceEnd
+            // 다음 시작지점은 종료지점과 같다
+          }
+
+          const key = Math.random().toString(16).substring(2)
+
+          for (let i=0; i<this.fileArray.length; i++) {
+            // 한개씩 서버로 전송한다
+            const test = await this.uploadFile(key, file.name, blobLength, i)
+            this.progressBar ++
+          }
+
+          // // 종료되면 합쳐줌
+          const data = {
+            key: key, // 랜덤 key값
+            size: blobLength, // index 사이즈
+            name: file.name, // 파일명
+            type: file.type, // 파일타입
+          }
+          fetch('http://localhost:3000/api/file/merge', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          })
+          .then((res) => {
+            this.fileArray = []
+            this.progressBar = 0
+            this.filename = file.name
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+        },
+        uploadFile (key, name, size, index) {
+          return new Promise((resolve, reject) => {
+            let form = new FormData()
+            form.append('key', key) // 랜덤 hex key값
+            form.append('size', size) // index 사이즈
+            form.append('index', index) // index
+            form.append('file', this.fileArray[index], name) // 전송할 파일
+            fetch('http://localhost:3000/api/file/store', {
+              method: 'POST',
+              body: form
+            })
+            .then((res) => {
+              resolve(res)
+            })
+            .catch((err) => {
+              reject(err)
+            })
+          })
+        }
+      }
+    }).mount('#app')
+  </script>
+</body>
+</html>
