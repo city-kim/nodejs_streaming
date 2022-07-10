@@ -1,0 +1,11 @@
+@layer base {
+  html {
+    @apply h-full bg-gray-200;
+  }
+  body {
+    @apply h-[calc(100%_-_60px)];
+  }
+  #app {
+    @apply h-full;
+  }
+}

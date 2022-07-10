@@ -1,0 +1,9 @@
+@layer components {
+  .upload-btn-group{
+    & div:first-child {
+      border-left: 30px solid transparent;
+      border-right: 30px solid transparent;
+      border-bottom: 20px solid theme('colors.gray.300');
+    }
+  }
+}

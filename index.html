@@ -13,14 +13,19 @@
     }
   </script>
   <style>
+    [v-cloak] {visibility: hidden; }
     .progress{padding:10px 0; }
     .stream{margin-top:10px; }
     .stream video{margin-top:10px; }
+    .streamWrap{margin-top:10px; }
+    .streamWrap ul{display: grid; gap:10px; margin:0; padding:0; }
+    .streamWrap ul li{list-style: none; }
+    .streamWrap video{margin-top:10px; }
   </style>
 </head>
 <body>
-  <div id="app">
-    <div v-show="!filename">
+  <div id="app" v-cloak>
+    <div>
       <input ref="file" type="file" />
       <button type="button" @click="createChunkFile()">파일 업로드하기</button>
       <div class="progress"
@@ -29,17 +34,21 @@
         <progress :max="fileArray.length - 1" :value="progressBar"></progress>
       </div>
     </div>
-
-    <div class="stream"
-      v-show="filename"
-    >
-      <p>{{filename}}</p>
-      <button type="button"
-        @click="stream = true"
-      >업로드한 video 스트리밍</button>
+    <div class="streamWrap">
+      <ul>
+        <li v-for="file in fileList">
+          {{file.name}}
+          <button type="button"
+            @click="changeStream(file.key)"
+          >스트리밍</button>
+          <button type="button"
+            @click="removeFile(file.key)"
+          >삭제</button>
+        </li>
+      </ul>
       <div v-if="stream">
         <video width="320" height="240" controls>
-          <source :src="`/api/video?name=${filename}`" type="video/mp4">
+          <source :src="`/api/video?key=${stream}`" type="video/mp4">
           Your browser does not support the video tag.
         </video>
       </div>
@@ -48,15 +57,17 @@
 
   <script type="module">
     import { createApp } from 'vue'
-  
     createApp({
       data() {
         return {
-          filename: '',
+          fileList: [],
           fileArray: [],
           progressBar: 0,
           stream: false,
         }
+      },
+      mounted () {
+        this.readFileList()
       },
       methods: {
         async createChunkFile() {
@@ -99,7 +110,8 @@
           .then((res) => {
             this.fileArray = []
             this.progressBar = 0
-            this.filename = file.name
+            this.$refs.file.value = null
+            this.readFileList()
           })
           .catch((err) => {
             console.log(err)
@@ -122,6 +134,45 @@
             .catch((err) => {
               reject(err)
             })
+          })
+        },
+        changeStream (key) {
+          this.stream = false
+          setTimeout(() => {
+            this.stream = key
+          }, 200);
+        },
+        readFileList () {
+          // 파일리스트 불러오기
+          fetch('http://localhost:3000/api/file/list', {
+            method: 'GET'
+          })
+          .then((res) => {
+            res.text().then((data) => {
+              this.fileList = JSON.parse(data)
+            })
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+        },
+        removeFile (key) {
+          const data = {
+            key: key
+          }
+          fetch('http://localhost:3000/api/file', {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          })
+          .then((res) => {
+            console.log(res)
+            this.readFileList()
+          })
+          .catch((err) => {
+            console.log(err)
           })
         }
       }
