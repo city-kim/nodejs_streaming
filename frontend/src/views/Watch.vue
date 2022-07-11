@@ -15,7 +15,7 @@ onMounted(() => {
 
 <template>
   <video v-if="stream" width="320" height="240" controls>
-    <source :src="`http://localhost:3000/api/video?key=${stream}`" type="video/mp4">
+    <source :src="`http://localhost:3000/api/video/stream?key=${stream}`" type="video/mp4">
     Your browser does not support the video tag.
   </video>
 </template>

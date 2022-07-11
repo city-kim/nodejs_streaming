@@ -33,7 +33,7 @@ const actions = {
     })
   },
   getVideoList({ commit }: ActionContext<StoreHomeType, RootState>) {
-    axios('http://localhost:3000/api/file/list/public', {
+    axios('http://localhost:3000/api/video/list/public', {
       method: 'GET'
     })
     .then((res) => {

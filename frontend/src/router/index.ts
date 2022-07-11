@@ -26,6 +26,11 @@ const routes = [
     name: 'mylist',
     component: () => import('@/views/Mylist.vue')
   },
+  {
+    path: '/mylist/:key',
+    name: 'mylist.modify',
+    component: () => import('@/views/Modify.vue')
+  },
 ]
 
 const router = createRouter({

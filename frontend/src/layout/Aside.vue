@@ -13,28 +13,34 @@ const privateLink = [
 
 <template>
 <div class="flex flex-col pt-4 px-4 gap-4">
-  <ul>
-    <li v-for="list in publicLink"
-      class="hover:bg-gray-200"
+  <nav>
+    <router-link
+      v-for="list in publicLink"
+      v-slot="{ href, isActive }"
+      :to="list.link"
     >
-      <router-link class="flex w-full p-2 items-center"
-        :to="list.link">
+      <li class="flex w-full p-2 hover:bg-gray-200 items-center"
+        :class="{'bg-gray-200': isActive}"
+      >
         <icon classes="mr-4" :icon="list.icon"/>
         {{list.name}}
-      </router-link>
-    </li>
-  </ul>
-  <ul class="flex flex-col pt-4 gap-2 border-t border-gray-300">
-    <li v-for="list in privateLink"
-      class="hover:bg-gray-200"
+      </li>
+    </router-link>
+  </nav>
+  <nav class="flex flex-col pt-4 gap-2 border-t border-gray-300">
+    <router-link
+      v-for="list in privateLink"
+      v-slot="{ href, isActive }"
+      :to="list.link"
     >
-      <router-link class="flex w-full p-2 items-center"
-        :to="list.link">
+      <li class="flex w-full p-2 hover:bg-gray-200 items-center"
+        :class="{'bg-gray-200': isActive}"
+      >
         <icon classes="mr-4" :icon="list.icon"/>
         {{list.name}}
-      </router-link>
-    </li>
-  </ul>
+      </li>
+    </router-link>
+  </nav>
   <a class="mt-auto py-2 text-sm text-gray-200"
     href="https://github.com/nkdevil"
     target="_blank"
