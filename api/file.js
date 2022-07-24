@@ -56,7 +56,7 @@ const updateFileData = (key, name, title, subject) => {
           title: title ? title : '',
           subject: subject ? subject : '',
           second: duration,
-          regDate: new Date().toISOString(),
+          regist_at: new Date().toISOString(),
           count: 0
         })
         fs.writeFile('video.json', JSON.stringify(fileList).replace(/,/g, ',\n'), 'utf-8', (err) => {

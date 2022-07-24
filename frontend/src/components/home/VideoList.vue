@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { toRefs, computed } from 'vue'
-import text_converter from '@/helper/text_converter'
+import { secondToTime } from '@/helper/text_converter'
 
 const props = defineProps({
   watchKey: String,
@@ -11,16 +11,16 @@ const props = defineProps({
     type: Number,
     required: true
   },
-  count: Number 
+  count: Number
 })
 
-const {watchKey, title, subject, count} = toRefs(props)
+const {watchKey, title, count} = toRefs(props)
 
-const second = computed(() => text_converter.secondToTime(props.second))
+const second = computed(() => secondToTime(props.second))
 </script>
 
 <template>
-  <div class="max-w-[360px]">
+  <div class="flex flex-col max-w-[360px]">
     <router-link :to="{name: 'watch', params: {key: watchKey}}">
       <figure class="relative">
         <img class="block mx-auto" :src="`http://localhost:3000/api/thumbnail?key=${watchKey}`"/>
@@ -37,9 +37,6 @@ const second = computed(() => text_converter.secondToTime(props.second))
         <router-link class="max-h-12 overflow-hidden text-ellipsis video-title text-gray-900"
           :to="{name: 'watch', params: {key: watchKey}}"
         >{{title}}</router-link>
-        <router-link class="block mt-1 text-sm text-gray-500"
-          to="#"
-        >{{subject}}</router-link>
         <p class="text-sm text-gray-500">
           조회수 {{count}}회
         </p>

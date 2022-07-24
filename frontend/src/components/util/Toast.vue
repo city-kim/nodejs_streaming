@@ -77,7 +77,7 @@ watch(closed, (newVal) => {
       <div class="flex py-2.5 px-3.5 justify-between items-center">
         <h3>{{props.title}}</h3>
         <div class="flex justify-between items-center">
-          <p class="text-sm">TODO: 7 second ago</p>
+          <!-- <p class="text-sm">TODO: 7 second ago</p> -->
           <Icon class="w-6 stroke-1 cursor-pointer"
             icon="x"
             @click="close()"

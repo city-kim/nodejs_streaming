@@ -2,7 +2,7 @@ const fs = require('fs')
 
 const public = (req, res) => {
   fs.readFile(`./video.json`, (error, data) => {
-    // 리스트 불러오기
+    // 제목이 있는 리스트만 불러오기
     if (error) res.status(404).send('file not found');
     const fileList = JSON.parse(data)
     // 이미 제목이 있는경우만 출력
@@ -18,12 +18,40 @@ const public = (req, res) => {
 
 const private = (req, res) => {
   fs.readFile(`./video.json`, (error, data) => {
-    // 리스트 불러오기
+    // 리스트 전부 불러오기
     if (error) res.status(404).send('file not found');
     const fileList = JSON.parse(data)
     res.send(fileList)
   })
 }
+
+const show = (req, res) => {
+  fs.readFile(`./video.json`, (error, data) => {
+    // 비디오 상세정보 받아오기
+    if (error) res.status(404).send('file not found');
+    const fileList = JSON.parse(data)
+    res.send(fileList.find(x => x.key == req.query.key))
+  })
+}
+
+const edit = (req, res) => {
+  fs.readFile(`./video.json`, (error, data) => {
+    // 비디오 정보 수정하기
+    if (error) res.status(404).send('file not found');
+    const fileList = JSON.parse(data)
+    const index = fileList.findIndex(x => x.key == req.query.key)
+    if (req.body.title) fileList[index].title = req.body.title
+    if (req.body.subject) fileList[index].subject = req.body.subject
+    fs.writeFile('video.json', JSON.stringify(fileList).replace(/,/g, ',\n'), 'utf-8', (err) => {
+      if (err) {
+        res.status(500).send('server Error');
+      } else {
+        res.send('done')
+      }
+    })
+  })
+}
+
 const stream = (req, res) => {
   // query name 파일을 불러와 스트리밍하기
   const filePath = `resources/${req.query.key}.mp4`
@@ -68,6 +96,8 @@ const counte = (req, res) => {
 module.exports = {
   public,
   private,
+  show,
+  edit,
   stream,
   counte
 }

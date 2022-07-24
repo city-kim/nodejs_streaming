@@ -17,6 +17,8 @@ router.post('/thumbnail/store', thumbnail.upload.single('file'), (req, res) => {
 
 router.get('/video/list/public', video.public) // 공개된 비디오보기
 router.get('/video/list/private', video.private) // 비공개된 비디오보기
+router.get('/video', video.show) // 단일건 비디오 정보보기
+router.put('/video', video.edit) // 비디오 정보수정
 router.get('/video/stream', video.stream) // 스트리밍
 router.put('/counter', video.counte) // 조회수
 
