@@ -56,21 +56,22 @@ const actions = {
     })
   },
   postUploadThumbnail({ commit }: ActionContext<StoreUploadType, RootState>, payload: uploadThumbnail) {
-    let form = new FormData()
-    console.log(payload)
-    form.append('key', payload.key) // 랜덤 hex key값
-    form.append('file', payload.file) // 전송할 파일
-    axios('http://localhost:3000/api/thumbnail/store', {
-      method: 'POST',
-      data: form
-    })
-    .then((res) => {
-      console.log(res)
-      // resolve(res)
-    })
-    .catch((err) => {
-      console.log(err)
-      // reject(err)
+    return new Promise((resolve, rejects) => {
+      let form = new FormData()
+      form.append('key', payload.key) // 랜덤 hex key값
+      form.append('file', payload.file) // 전송할 파일
+      axios('http://localhost:3000/api/thumbnail/store', {
+        method: 'POST',
+        data: form
+      })
+      .then((res) => {
+        // console.log(res)
+        resolve(res)
+      })
+      .catch((err) => {
+        // console.log(err)
+        rejects(err)
+      })
     })
   }
 }

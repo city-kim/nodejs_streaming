@@ -14,7 +14,8 @@ export default {
       toastWrap = document.createElement('div')
       toastWrap.id = '__toast__wrap'
       toastWrap.style.position = 'fixed'
-      toastWrap.style.left = '1rem'
+      toastWrap.style.left = '50%'
+      toastWrap.style.transform = 'translateX(-50%)'
       toastWrap.style.bottom = '1rem'
       toastWrap.style.zIndex = '30'
       document.body.appendChild(toastWrap)

@@ -4,7 +4,6 @@ import { useStore } from 'vuex'
 import router from '@/router'
 
 import Icon from '@/components/util/Icon.vue'
-import { url } from 'inspector';
 
 const store = useStore() // vuex
 const fileUploader = ref<HTMLInputElement | null>(null) // input file element
@@ -18,6 +17,7 @@ const videoEl = ref<null | HTMLVideoElement>(null) // 샘플 비디오
 const canvasEl = ref<null | HTMLCanvasElement>(null) // 썸네일 캔버스
 
 const progressBar = ref(0) // 프로그레스바
+const uploadText = ref('업로드중...') // 업로드 출력 텍스트
 
 function fileSelect () {
   // window창 띄워서 파일을 선택시키기
@@ -90,22 +90,29 @@ async function uploadFile () {
       name: file.value.name, // 파일명
       type: file.value.type, // 파일타입
     }).then((res) => {
-      progressBar.value = 0
+      uploadText.value = '비디오를 만드는중...'
       file.value = null
+      if (video) {
+        // 캔버스로 썸네일 만들기
+        let ctx = canvasEl.value?.getContext('2d')
+        ctx?.drawImage(video, 0, 0, 360, 200)
+        canvasEl.value?.toBlob((file) => {
+          store.dispatch('Upload/postUploadThumbnail', {
+            file: file,
+            key: key
+          })
+          .then((res) => {
+            uploadText.value = '썸네일 제작중...'
+            setTimeout(() => {
+              router.push({name: 'mylist.modify', params: { key: key }})
+              progressBar.value = 0
+            }, 500)
+          })
+          URL.revokeObjectURL(sampleVideo.value)
+          sampleVideo.value = ''
+        },'image/png')
+      }
     })
-
-    if (video) {
-      let ctx = canvasEl.value?.getContext('2d')
-      ctx?.drawImage(video, 0, 0, 360, 200)
-      canvasEl.value?.toBlob((file) => {
-        store.dispatch('Upload/postUploadThumbnail', {
-          file: file,
-          key: key
-        })
-        URL.revokeObjectURL(sampleVideo.value)
-        sampleVideo.value = ''
-      },'image/png')
-    }
   }
 }
 
@@ -157,7 +164,7 @@ async function uploadFile () {
       v-show="progressBar > 0"
     >
       <div class="bg-blue-600 h-2.5 rounded-full" :style="`width: ${progressBar}%`"></div>
-      <h2 class="mt-3 text-center text-3xl">업로드중...</h2>
+      <h2 class="mt-3 text-center text-3xl">{{uploadText}}</h2>
     </div>
 
     

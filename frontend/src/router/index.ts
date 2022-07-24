@@ -12,10 +12,15 @@ const routes = [
     component: () => import('@/views/Watch.vue')
   },
   {
-    path: '/history',
-    name: 'history',
-    component: () => import('@/views/History.vue')
+    path: '/search',
+    name: 'search',
+    component: () => import('@/views/Search.vue')
   },
+  // {
+  //   path: '/history',
+  //   name: 'history',
+  //   component: () => import('@/views/History.vue')
+  // },
   {
     path: '/upload',
     name: 'upload',

@@ -3,6 +3,7 @@ const fs = require('fs')
 const app = express()
 const apiController = require('./api/controller.js')
 const cors = require('cors')
+const path = require('path')
 
 const makeFolder = (dir) => {
   if (!fs.existsSync(dir)) {
@@ -18,8 +19,10 @@ app.use(cors({
 // app.use('/js', express.static(__dirname + '/js'))
 app.use('/api', apiController)
 
+app.use(express.static('dist'));
+
 app.get(/(.*)/, function (req, res) {
-  fs.createReadStream(__dirname + "/index.html").pipe(res)
+  fs.createReadStream(__dirname + "/dist/index.html").pipe(res)
 })
 
 app.listen(3000, function () {

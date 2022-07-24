@@ -1,7 +1,18 @@
  @layer components {
   .video-title{
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
   }
+  .SkeletonBox {
+    background: linear-gradient(90deg, #eee 32%, rgba(255,255,255,0.3) 50%, #eee 63%) #eee;
+    background-size: 300% 100%;
+    animation: shine 1s infinite;
+  }
+ }
+ 
+ @keyframes shine {
+   0% {
+     background-position: right;
+   }
  }

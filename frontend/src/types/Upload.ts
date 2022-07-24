@@ -12,7 +12,7 @@ interface createVideo {
   type: string // 파일타입
 }
 
-interface uploadThumbnail {
+interface uploadThumbnail { // 썸네일 업로드값
   key: string,
   file: File
 }
