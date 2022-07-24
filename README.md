@@ -12,6 +12,12 @@ yarn run start
 npm run start
 ```
 
+#### 프론트 빌드시
+```
+cd frontend
+yarn run build
+```
+
 ------------
 ![sample1](https://user-images.githubusercontent.com/26377698/180644782-91dc650b-2906-4f02-ae4c-104ec6ce3767.gif)
 ![sample2](https://user-images.githubusercontent.com/26377698/180644786-b007fb6c-26a9-4d44-b5d8-e106acab6f56.gif)
